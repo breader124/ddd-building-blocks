@@ -1,3 +1,3 @@
 package com.breader.dddbuildingblocks.guitar
 
-data class Song(val notes: List<Note>)
+data class SongPart(val notes: List<Note>)

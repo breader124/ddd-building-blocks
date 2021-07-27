@@ -2,20 +2,12 @@ package com.breader.dddbuildingblocks.guitar
 
 class Guitar {
 
-    fun playSong(song: Song) {
-
+    fun playRhythmPart(songPart: SongPart): Result {
+        TODO()
     }
 
-    fun switchPickup() {
-
-    }
-
-    fun tune() {
-
-    }
-
-    fun adjustTone() {
-
+    fun playSolo(songPart: SongPart): Result {
+        TODO()
     }
 
 }
