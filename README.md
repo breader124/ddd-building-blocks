@@ -3,7 +3,7 @@ This repository contains implementation of tactical DDD building blocks. I decid
 starting from structure modelling. When you track commits history, you can see, that firstly I discovered (during Design Level Event Storming session) and grouped business rules, which need to always stay consistent together. They are called **invariants** and gathered create **aggregate** ('aggregate' word can be misleading for some people, it's crucial to remember that this block aggregates **invariants** on the first place, not any kind of data). 
 
 ## Outcome of Design Level Event Storming (with legend attached)
-guitar_dles.png
+![Design Level Event Storming diagram](https://github.com/breader124/ddd-building-blocks/blob/master/guitar_dles.png)
 
 ## Why did I try this way?
 Maybe you're wondering what's wrong with standard approach? Answer is pretty simple this time: nothing. Presented solution is just another approach to the problem, but indeed it has great advantages. As so called **invariants** don't sound pretty clear when you see the name for the first time, let's try to express sense of grouping business rules other way. We don't want to listen to the song played on out-of-tune guitar, right? We also don't want to hear Master of Puppets played without distortion, right? And last thing, everyone, who had a pleasure to touch electric guitar, knows there's big difference between the tone of bridge and neck pickup. Whenever we're sure all 3 mentioned rules are satisfied, we can be also sure that guitar is ready to shred. It's much more difficult to achieve the same goal if you start not by defining mentioned rules, but by implementing how guitar is built.
