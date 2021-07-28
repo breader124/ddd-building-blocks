@@ -1,6 +1,7 @@
-package com.breader.dddbuildingblocks.guitar
+package com.breader.dddbuildingblocks.guitar.specification
 
 import com.breader.dddbuildingblocks.common.Specification
+import com.breader.dddbuildingblocks.guitar.Guitar
 
 class MetallicaToneSpecification : Specification<Guitar> {
 

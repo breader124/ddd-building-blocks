@@ -1,9 +1,23 @@
 package com.breader.dddbuildingblocks.guitar
 
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 internal class GuitarTest {
+
+    val soloSection = SongPart(
+        notes = List(150) { Note.ofHeight(Random.nextInt(0, 12)) },
+        meter = Meter(4, 4),
+        tempo = 160,
+        tuning = Tuning.STANDARD
+    )
+
+    val rhythmSection = SongPart(
+        notes = List(150) { Note.ofHeight(Random.nextInt(0, 12)) },
+        meter = Meter(4, 4),
+        tempo = 120,
+        tuning = Tuning.STANDARD
+    )
 
     @Test
     fun should_play_rhythm_part_when_it_is_doable() {
