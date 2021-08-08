@@ -4,18 +4,18 @@ import java.util.*
 
 class Guitar(
     private val id: GuitarId,
-    private val pickups: Pickups,
     private val supportedTunings: List<Tuning>,
     private val tuning: Tuning,
+    private val pickups: Pickups,
     private val volumeKnob: Knob,
     private val toneKnob: Knob
 ) {
 
-    fun playRhythmPart(songPart: SongPart): Result {
+    fun playSong(partToPlay: PartToPlay): Result {
         TODO()
     }
 
-    fun playSolo(songPart: SongPart): Result {
+    fun playWarmUp(partToPlay: PartToPlay): Result {
         TODO()
     }
 
