@@ -23,10 +23,10 @@ internal class GuitarTest {
     private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob)
 
     private val notReachableToneSpec = Specification<Guitar, ToneCheckResult> {
-        ToneCheckResult(ToneCheckCode.TONE_NOT_ADJUSTABLE, null, null, null)
+        ToneCheckResult(listOf(ToneCheckCode.TONE_NOT_ADJUSTABLE), null, null, null)
     }
     private val reachableToneSpec = Specification<Guitar, ToneCheckResult> {
-        ToneCheckResult(ToneCheckCode.OK, null, null, null)
+        ToneCheckResult(listOf(ToneCheckCode.OK), null, null, null)
     }
 
     private val warmupSection = PartToPlay(Tuning.STANDARD, warmupToneSpecification)
