@@ -3,12 +3,11 @@ package com.breader.dddbuildingblocks.guitar
 import java.util.*
 
 class Guitar(
-    private val id: GuitarId,
-    private val supportedTunings: List<Tuning>,
-    private val tuning: Tuning,
-    private val pickups: Pickups,
-    private val volumeKnob: Knob,
-    private val toneKnob: Knob
+    val id: GuitarId,
+    var tunings: Tunings,
+    var pickups: Pickups,
+    var volumeKnob: Knob,
+    var toneKnob: Knob
 ) {
 
     fun playSong(partToPlay: PartToPlay): Result {
@@ -21,4 +20,10 @@ class Guitar(
 
 }
 
-class GuitarId(val id: UUID)
+class GuitarId {
+    val id: UUID
+
+    init {
+        id = UUID.randomUUID()
+    }
+}

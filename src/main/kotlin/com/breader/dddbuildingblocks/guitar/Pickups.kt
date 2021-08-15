@@ -1,6 +1,6 @@
 package com.breader.dddbuildingblocks.guitar
 
-class Pickups private constructor(private val p: List<Pickup>, val chosen: Pickup) {
+class Pickups private constructor(private val available: List<Pickup>, val chosen: Pickup) {
     companion object {
         fun with(p: List<Pickup>, chosen: Pickup): Pickups {
             if (p.isEmpty()) throw IllegalArgumentException("You must pass at least one pickup")
@@ -14,11 +14,9 @@ class Pickups private constructor(private val p: List<Pickup>, val chosen: Picku
         }
     }
 
-    fun getAvailable() = p
-
     fun switch(chosen: Pickup): Pickups {
-        if (!p.contains(chosen)) throw IllegalArgumentException("Chosen pickup not available")
-        return Pickups(this.p, chosen)
+        if (!available.contains(chosen)) throw IllegalArgumentException("Chosen pickup not available")
+        return Pickups(this.available, chosen)
     }
 }
 
