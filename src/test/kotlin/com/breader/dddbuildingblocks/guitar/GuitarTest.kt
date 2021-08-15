@@ -1,6 +1,8 @@
 package com.breader.dddbuildingblocks.guitar
 
 import com.breader.dddbuildingblocks.common.Specification
+import com.breader.dddbuildingblocks.guitar.specification.ToneCheckCode
+import com.breader.dddbuildingblocks.guitar.specification.ToneCheckResult
 import com.breader.dddbuildingblocks.guitar.specification.warmupToneSpecification
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -20,8 +22,12 @@ internal class GuitarTest {
 
     private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob)
 
-    private val notReachableToneSpec = Specification<Guitar> { false }
-    private val reachableToneSpec = Specification<Guitar> { true }
+    private val notReachableToneSpec = Specification<Guitar, ToneCheckResult> {
+        ToneCheckResult(ToneCheckCode.TONE_NOT_ADJUSTABLE, null, null, null)
+    }
+    private val reachableToneSpec = Specification<Guitar, ToneCheckResult> {
+        ToneCheckResult(ToneCheckCode.OK, null, null, null)
+    }
 
     private val warmupSection = PartToPlay(Tuning.STANDARD, warmupToneSpecification)
     private val playableSection = PartToPlay(Tuning.STANDARD, reachableToneSpec)
