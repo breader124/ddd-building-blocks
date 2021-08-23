@@ -3,7 +3,6 @@ package com.breader.dddbuildingblocks.guitar
 import com.breader.dddbuildingblocks.common.Specification
 import com.breader.dddbuildingblocks.guitar.specification.ToneCheckCode
 import com.breader.dddbuildingblocks.guitar.specification.ToneCheckResult
-import com.breader.dddbuildingblocks.guitar.specification.warmupToneSpecification
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -29,7 +28,6 @@ internal class GuitarTest {
         ToneCheckResult(listOf(ToneCheckCode.OK), null, null, null)
     }
 
-    private val warmupSection = PartToPlay(Tuning.STANDARD, warmupToneSpecification)
     private val playableSection = PartToPlay(Tuning.STANDARD, reachableToneSpec)
     private val invalidTuningSection = PartToPlay(Tuning.DROP_C, reachableToneSpec)
     private val invalidToneSpecSection = PartToPlay(Tuning.STANDARD, notReachableToneSpec)
@@ -62,28 +60,19 @@ internal class GuitarTest {
     }
 
     @Test
-    fun should_play_warmup_when_guitar_is_in_proper_state() {
+    fun should_play_warmup_without_any_complaints() {
         // given
         val volumeKnob = guitar.volumeKnob
         guitar.volumeKnob = volumeKnob.adjustLevel(0)
 
         // when
-        val result = guitar.playWarmUp(warmupSection)
+        val result = guitar.playWarmUp()
 
         // then
         assertEquals(Result.OK, result)
 
         // finally
         guitar.volumeKnob = volumeKnob
-    }
-
-    @Test
-    fun should_not_play_warmup_when_guitar_is_not_muted() {
-        // given + when
-        val result = guitar.playWarmUp(warmupSection)
-
-        // then
-        assertEquals(Result.TONE_NOT_ADJUSTABLE, result)
     }
 
 }
