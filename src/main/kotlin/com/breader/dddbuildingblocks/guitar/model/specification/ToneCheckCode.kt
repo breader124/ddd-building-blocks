@@ -1,4 +1,4 @@
-package com.breader.dddbuildingblocks.guitar.specification
+package com.breader.dddbuildingblocks.guitar.model.specification
 
 enum class ToneCheckCode {
     OK,

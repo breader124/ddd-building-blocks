@@ -1,8 +1,10 @@
 package com.breader.dddbuildingblocks.guitar
 
 import com.breader.dddbuildingblocks.common.Specification
-import com.breader.dddbuildingblocks.guitar.specification.ToneCheckCode
-import com.breader.dddbuildingblocks.guitar.specification.ToneCheckResult
+import com.breader.dddbuildingblocks.guitar.model.*
+import com.breader.dddbuildingblocks.guitar.model.Result.*
+import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckCode
+import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -38,7 +40,7 @@ internal class GuitarTest {
         val result = guitar.playSong(playableSection)
 
         // then
-        assertEquals(Result.OK, result)
+        assertEquals(OK, result)
     }
 
     @Test
@@ -47,7 +49,7 @@ internal class GuitarTest {
         val result = guitar.playSong(invalidToneSpecSection)
 
         // then
-        assertEquals(Result.TONE_NOT_ADJUSTABLE, result)
+        assertEquals(TONE_NOT_ADJUSTABLE, result)
     }
 
     @Test
@@ -56,7 +58,7 @@ internal class GuitarTest {
         val result = guitar.playSong(invalidTuningSection)
 
         // then
-        assertEquals(Result.DESIRED_TUNING_NOT_AVAILABLE, result)
+        assertEquals(DESIRED_TUNING_NOT_AVAILABLE, result)
     }
 
     @Test
@@ -69,7 +71,7 @@ internal class GuitarTest {
         val result = guitar.playWarmUp()
 
         // then
-        assertEquals(Result.OK, result)
+        assertEquals(OK, result)
 
         // finally
         guitar.volumeKnob = volumeKnob

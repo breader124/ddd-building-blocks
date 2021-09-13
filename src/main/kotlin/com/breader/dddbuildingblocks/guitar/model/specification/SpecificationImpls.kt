@@ -1,7 +1,7 @@
-package com.breader.dddbuildingblocks.guitar.specification
+package com.breader.dddbuildingblocks.guitar.model.specification
 
 import com.breader.dddbuildingblocks.common.Specification
-import com.breader.dddbuildingblocks.guitar.Guitar
+import com.breader.dddbuildingblocks.guitar.model.Guitar
 
 val warmupToneSpecification = Specification<Guitar, ToneCheckResult> {
     if (it.volumeKnob.level == 0) {

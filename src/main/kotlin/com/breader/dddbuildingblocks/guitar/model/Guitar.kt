@@ -1,8 +1,8 @@
-package com.breader.dddbuildingblocks.guitar
+package com.breader.dddbuildingblocks.guitar.model
 
-import com.breader.dddbuildingblocks.guitar.specification.ToneCheckCode
-import com.breader.dddbuildingblocks.guitar.specification.ToneCheckResult
-import com.breader.dddbuildingblocks.guitar.specification.warmupToneSpecification
+import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckCode
+import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
+import com.breader.dddbuildingblocks.guitar.model.specification.warmupToneSpecification
 
 class Guitar(
     val id: GuitarId,
@@ -47,8 +47,8 @@ class Guitar(
 
     private fun tryToSolveProblems(toneSpecResult: ToneCheckResult): MutableList<ToneCheckCode> {
         val existingProblems = toneSpecResult.codes.toMutableList()
-        // checking for status code below might be also solved by visitor pattern for sake of not overcomplicating it
-        // all it is done by just using several ifs
+        // checking for status code below might be also solved by visitor pattern, for sake of not overcomplicating it
+        // all, it is done by just using several ifs, whenever this class grows, this is first place for refactoring
         toneSpecResult.codes.forEach {
             if (it == ToneCheckCode.INVALID_VOL_KNOB_LEVEL) {
                 toneSpecResult.desiredVolKnobLevel?.also { level ->

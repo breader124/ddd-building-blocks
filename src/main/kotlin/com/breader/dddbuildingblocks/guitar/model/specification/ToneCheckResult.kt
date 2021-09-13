@@ -1,6 +1,6 @@
-package com.breader.dddbuildingblocks.guitar.specification
+package com.breader.dddbuildingblocks.guitar.model.specification
 
-import com.breader.dddbuildingblocks.guitar.Pickup
+import com.breader.dddbuildingblocks.guitar.model.Pickup
 
 data class ToneCheckResult(
     val codes: List<ToneCheckCode>,

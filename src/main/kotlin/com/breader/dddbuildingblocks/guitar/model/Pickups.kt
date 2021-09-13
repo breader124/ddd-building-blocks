@@ -1,4 +1,4 @@
-package com.breader.dddbuildingblocks.guitar
+package com.breader.dddbuildingblocks.guitar.model
 
 class Pickups private constructor(private val available: List<Pickup>, val chosen: Pickup) {
     companion object {

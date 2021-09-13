@@ -1,4 +1,4 @@
-package com.breader.dddbuildingblocks.guitar
+package com.breader.dddbuildingblocks.guitar.model
 
 enum class Result {
     OK,
