@@ -1,10 +1,11 @@
 package com.breader.dddbuildingblocks.organizer.model
 
 import com.breader.dddbuildingblocks.guitar.application.PlayingSongCommand
+import com.breader.dddbuildingblocks.guitar.model.*
 import java.util.*
 
 data class PlaySongRequest(
-    val guitarId: UUID,
+    val id: UUID,
     val tuning: String,
     val pickupType: String,
     val pickupPos: String,
@@ -13,7 +14,13 @@ data class PlaySongRequest(
 ) : Request<PlayingSongCommand> {
 
     override fun toCommand(): PlayingSongCommand {
-        TODO("Not yet implemented")
+        return PlayingSongCommand(
+            GuitarId(id),
+            Tuning.valueOf(tuning),
+            Pickup.ofTypeAndPos(PickupType.valueOf(pickupType), PickupPosition.valueOf(pickupPos)),
+            volumeLevel,
+            toneLevel
+        )
     }
 
 }
