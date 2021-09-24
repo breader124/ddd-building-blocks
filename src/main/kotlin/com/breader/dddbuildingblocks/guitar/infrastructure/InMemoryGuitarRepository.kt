@@ -5,11 +5,15 @@ import com.breader.dddbuildingblocks.guitar.model.GuitarId
 import com.breader.dddbuildingblocks.guitar.model.Guitars
 
 class InMemoryGuitarRepository : Guitars {
+
+    private val memory = mutableListOf<Guitar>()
+
     override fun findById(id: GuitarId): Guitar {
-        TODO("Not yet implemented")
+        return memory.find { it.id == id } ?: throw NoSuchElementException("No such element with id=$id")
     }
 
     override fun save(guitar: Guitar) {
-        TODO("Not yet implemented")
+        memory.add(guitar)
     }
+
 }

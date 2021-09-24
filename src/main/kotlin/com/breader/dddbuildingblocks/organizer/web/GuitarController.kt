@@ -2,7 +2,6 @@ package com.breader.dddbuildingblocks.organizer.web
 
 import com.breader.dddbuildingblocks.guitar.application.ManufacturingGuitar
 import com.breader.dddbuildingblocks.guitar.application.PlayingSong
-import com.breader.dddbuildingblocks.guitar.model.Guitar
 import com.breader.dddbuildingblocks.guitar.model.GuitarId
 import com.breader.dddbuildingblocks.guitar.model.Guitars
 import com.breader.dddbuildingblocks.organizer.model.GuitarDTO
