@@ -6,8 +6,8 @@ import com.breader.dddbuildingblocks.guitar.model.*
 data class ManufactureGuitarRequest(
     val availableTunings: List<String>,
     val chosenTuning: String,
-    val availablePickups: List<PickupInfo>,
-    val chosenPickup: PickupInfo,
+    val availablePickups: List<PickupDTO>,
+    val chosenPickup: PickupDTO,
     val volumeKnobLevel: Int,
     val toneKnobLevel: Int
 ) : Request<ManufactureGuitarCommand> {
@@ -34,8 +34,3 @@ data class ManufactureGuitarRequest(
     }
 
 }
-
-data class PickupInfo(
-    val type: String,
-    val pos: String
-)

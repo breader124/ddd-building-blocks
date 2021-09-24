@@ -1,6 +1,6 @@
 package com.breader.dddbuildingblocks.guitar.model
 
-class Pickups private constructor(private val available: List<Pickup>, val chosen: Pickup) {
+class Pickups private constructor(val available: List<Pickup>, val chosen: Pickup) {
     companion object {
         fun with(p: List<Pickup>, chosen: Pickup): Pickups {
             if (p.isEmpty()) throw IllegalArgumentException("You must pass at least one pickup")

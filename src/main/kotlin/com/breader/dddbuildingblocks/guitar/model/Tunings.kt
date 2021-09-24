@@ -1,6 +1,6 @@
 package com.breader.dddbuildingblocks.guitar.model
 
-class Tunings private constructor(private val available: List<Tuning>, val chosen: Tuning) {
+class Tunings private constructor(val available: List<Tuning>, val chosen: Tuning) {
     companion object {
         fun with(available: List<Tuning>, chosen: Tuning) = Tunings(available, chosen)
     }
