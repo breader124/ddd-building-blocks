@@ -10,9 +10,9 @@ data class ManufactureGuitarRequest(
     val chosenPickup: PickupDTO,
     val volumeKnobLevel: Int,
     val toneKnobLevel: Int
-) : Request<ManufactureGuitarCommand> {
+) {
 
-    override fun toCommand(): ManufactureGuitarCommand {
+    fun toCommand(): ManufactureGuitarCommand {
         val availableTunings = mutableListOf<Tuning>()
         this.availableTunings.forEach { availableTunings.add(Tuning.valueOf(it)) }
         val chosenTuning = Tuning.valueOf(chosenTuning)

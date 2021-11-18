@@ -4,6 +4,7 @@ class Pickups private constructor(val available: List<Pickup>, val chosen: Picku
     companion object {
         fun with(p: List<Pickup>, chosen: Pickup): Pickups {
             if (p.isEmpty()) throw IllegalArgumentException("You must pass at least one pickup")
+            if (!p.contains(chosen)) throw IllegalArgumentException("Pickup list must contain chosen one")
             PickupPosition.values().forEach {
                 val num = p.count { pickup -> pickup.pickupPosition == it }
                 if (num > 1) {

@@ -5,17 +5,16 @@ import com.breader.dddbuildingblocks.guitar.model.*
 import java.util.*
 
 data class PlaySongRequest(
-    val id: UUID,
     val tuning: String,
     val pickupType: String,
     val pickupPos: String,
     val volumeLevel: Int,
     val toneLevel: Int
-) : Request<PlayingSongCommand> {
+) {
 
-    override fun toCommand(): PlayingSongCommand {
+    fun toCommand(guitarId: UUID): PlayingSongCommand {
         return PlayingSongCommand(
-            GuitarId(id),
+            GuitarId(guitarId),
             Tuning.valueOf(tuning),
             Pickup.ofTypeAndPos(PickupType.valueOf(pickupType), PickupPosition.valueOf(pickupPos)),
             volumeLevel,

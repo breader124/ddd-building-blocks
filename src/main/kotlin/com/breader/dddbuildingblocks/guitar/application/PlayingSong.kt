@@ -2,8 +2,6 @@ package com.breader.dddbuildingblocks.guitar.application
 
 import com.breader.dddbuildingblocks.guitar.model.Guitars
 import com.breader.dddbuildingblocks.guitar.model.PartToPlay
-import com.breader.dddbuildingblocks.guitar.model.Result.DESIRED_TUNING_NOT_AVAILABLE
-import com.breader.dddbuildingblocks.guitar.model.Result.TONE_NOT_ADJUSTABLE
 import com.breader.dddbuildingblocks.guitar.model.ToneSpec
 
 class PlayingSong(private val guitars: Guitars) {
@@ -12,10 +10,7 @@ class PlayingSong(private val guitars: Guitars) {
         val guitar = guitars.findById(command.guitarId) ?: throw NoSuchElementException()
 
         val partToPlay = preparePartToPlay(command)
-        val result = guitar.playSong(partToPlay)
-        if (result == DESIRED_TUNING_NOT_AVAILABLE || result == TONE_NOT_ADJUSTABLE) {
-            throw IllegalArgumentException()
-        }
+        guitar.playSong(partToPlay)
 
         guitars.save(guitar)
     }

@@ -6,7 +6,7 @@ class Tunings private constructor(val available: List<Tuning>, val chosen: Tunin
     }
 
     fun tune(chosen: Tuning): Tunings {
-        if (!available.contains(chosen)) throw IllegalArgumentException("Chosen pickup not available")
+        if (!available.contains(chosen)) throw IllegalArgumentException("Chosen tuning not available")
         return Tunings(this.available, chosen)
     }
 }

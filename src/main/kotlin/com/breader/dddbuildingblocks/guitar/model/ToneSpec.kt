@@ -28,9 +28,9 @@ class ToneSpec private constructor(
 
         return ToneCheckResult(
             toneCheckCodeList,
-            if (toneCheckCodeList.contains(ToneCheckCode.WRONG_PICKUP_CHOSEN)) target.pickups.chosen else null,
-            if (toneCheckCodeList.contains(ToneCheckCode.INVALID_VOL_KNOB_LEVEL)) target.volumeKnob.level else null,
-            if (toneCheckCodeList.contains(ToneCheckCode.INVALID_TONE_KNOB_LEVEL)) target.toneKnob.level else null,
+            if (toneCheckCodeList.contains(ToneCheckCode.WRONG_PICKUP_CHOSEN)) pickup else null,
+            if (toneCheckCodeList.contains(ToneCheckCode.INVALID_TONE_KNOB_LEVEL)) toneLevel else null,
+            if (toneCheckCodeList.contains(ToneCheckCode.INVALID_VOL_KNOB_LEVEL)) volumeLevel else null,
         )
     }
 
