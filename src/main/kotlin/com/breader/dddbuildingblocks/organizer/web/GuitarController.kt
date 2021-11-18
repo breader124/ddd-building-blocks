@@ -14,12 +14,21 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-@RestController("guitar")
+@RestController
+@RequestMapping("guitars")
 class GuitarController(
     private val manufacturingGuitar: ManufacturingGuitar,
     private val playingSong: PlayingSong,
     private val guitars: Guitars
 ) {
+
+    @PostMapping
+    fun manufactureGuitar(@RequestBody request: ManufactureGuitarRequest): ResponseEntity<EntityModel<Void>> {
+        val manufacturedGuitarId = manufacturingGuitar.handle(request.toCommand())
+        val linkToShowGuitar = linkTo(methodOn(GuitarController::class.java).showGuitar(manufacturedGuitarId.id))
+        val linkAsUri = linkToShowGuitar.toUri()
+        return ResponseEntity.created(linkAsUri).build()
+    }
 
     @GetMapping("{id}")
     fun showGuitar(@PathVariable id: UUID): ResponseEntity<GuitarDTO> {
@@ -30,18 +39,22 @@ class GuitarController(
         return ResponseEntity.ok(dto)
     }
 
-    @PostMapping
-    fun manufactureGuitar(@RequestBody request: ManufactureGuitarRequest): ResponseEntity<EntityModel<Void>> {
-        val manufacturedGuitarId = manufacturingGuitar.handle(request.toCommand())
-        val linkToShowGuitar = linkTo(methodOn(GuitarController::class.java).showGuitar(manufacturedGuitarId.id))
-        val linkAsUri = linkToShowGuitar.toUri()
-        return ResponseEntity.created(linkAsUri).build()
+    @PostMapping("{guitarId}/play")
+    fun playSong(@PathVariable guitarId: UUID, @RequestBody request: PlaySongRequest): ResponseEntity<EntityModel<Void>> {
+        playingSong.handle(request.toCommand(guitarId))
+        return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("{id}/play")
-    fun playSong(@PathVariable guitarId: UUID, @RequestBody request: PlaySongRequest): ResponseEntity<EntityModel<Void>> {
-        playingSong.handle(request.toCommand())
-        return ResponseEntity.noContent().build()
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun handleNoSuchElementException(exc: IllegalArgumentException): ResponseEntity<ProcessingError> {
+        return ResponseEntity
+            .badRequest()
+            .body(ProcessingError(exc.message ?: ""))
+    }
+
+    @ExceptionHandler(NoSuchElementException::class)
+    fun handleNoSuchElementException(exc: NoSuchElementException): ResponseEntity<ProcessingError> {
+        return ResponseEntity.notFound().build()
     }
 
 }

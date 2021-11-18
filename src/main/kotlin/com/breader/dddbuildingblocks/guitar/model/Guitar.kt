@@ -12,23 +12,17 @@ class Guitar(
     var toneKnob: Knob
 ) {
 
-    fun playSong(partToPlay: PartToPlay): Result {
-        if (!isGuitarInTune(partToPlay)) return Result.DESIRED_TUNING_NOT_AVAILABLE
-        if (!checkTone(partToPlay)) return Result.TONE_NOT_ADJUSTABLE
-        return Result.OK
+    fun playSong(partToPlay: PartToPlay) {
+        tuneFor(partToPlay)
+        adjustToneFor(partToPlay)
     }
 
-    private fun isGuitarInTune(partToPlay: PartToPlay): Boolean {
+    private fun tuneFor(partToPlay: PartToPlay){
         val desiredTuning = partToPlay.tuning
-        try {
-            tunings = tunings.tune(desiredTuning)
-        } catch (exc: IllegalArgumentException) {
-            return false
-        }
-        return true
+        tunings = tunings.tune(desiredTuning)
     }
 
-    private fun checkTone(partToPlay: PartToPlay): Boolean {
+    private fun adjustToneFor(partToPlay: PartToPlay): Boolean {
         val toneSpecResult = identifyProblemsWithTone(partToPlay)
         if (isThereNoProblemsWithTone(toneSpecResult)) {
             return true
@@ -64,7 +58,7 @@ class Guitar(
             }
             if (it == ToneCheckCode.WRONG_PICKUP_CHOSEN) {
                 toneSpecResult.desiredPickup?.also { pickup ->
-                    pickups.switch(pickup)
+                    pickups = pickups.switch(pickup)
                     existingProblems.remove(it)
                 }
             }
@@ -72,12 +66,11 @@ class Guitar(
         return existingProblems
     }
 
-    fun playWarmUp(): Result {
+    fun playWarmUp(){
         val toneCheckResult = warmupToneSpecification.isSatisfiedBy(this)
         if (toneCheckResult.codes.contains(ToneCheckCode.INVALID_VOL_KNOB_LEVEL)) {
             volumeKnob = Knob.withLevel(0)
         }
-        return Result.OK
     }
 
 }

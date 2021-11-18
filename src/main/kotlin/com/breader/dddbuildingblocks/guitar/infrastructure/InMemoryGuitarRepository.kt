@@ -9,7 +9,7 @@ class InMemoryGuitarRepository : Guitars {
     private val memory = mutableListOf<Guitar>()
 
     override fun findById(id: GuitarId): Guitar {
-        return memory.find { it.id == id } ?: throw NoSuchElementException("No such element with id=$id")
+        return memory.find { it.id.id == id.id } ?: throw NoSuchElementException("No such element with id=${id.id}")
     }
 
     override fun save(guitar: Guitar) {
