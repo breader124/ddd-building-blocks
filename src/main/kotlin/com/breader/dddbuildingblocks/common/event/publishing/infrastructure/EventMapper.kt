@@ -5,10 +5,17 @@ import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEven
 
 class EventMapper {
 
-//    companion object {
-//        fun toPersistableEvent(domainEvent: DomainEvent): PersistableEvent {
-//            return PersistableEvent()
-//        }
-//    }
+    fun toPersistableEvent(domainEvent: DomainEvent) = PersistableEvent(
+        eventId = domainEvent.eventId,
+        aggregateId = domainEvent.aggregateId,
+        correlationId = domainEvent.correlationId,
+        causationId = domainEvent.causationId,
+        version = domainEvent.version,
+        happenedAt = domainEvent.happenedAt,
+        eventType = domainEvent.javaClass.typeName,
+        eventData = ""
+    )
+
+    // more functions to add here to cover more specific types of events whenever they appear
 
 }
