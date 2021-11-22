@@ -14,6 +14,7 @@ data class PlaySongRequest(
 
     fun toCommand(guitarId: UUID): PlayingSongCommand {
         return PlayingSongCommand(
+            UUID.randomUUID(),
             GuitarId(guitarId),
             Tuning.valueOf(tuning),
             Pickup.ofTypeAndPos(PickupType.valueOf(pickupType), PickupPosition.valueOf(pickupPos)),

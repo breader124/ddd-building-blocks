@@ -2,6 +2,7 @@ package com.breader.dddbuildingblocks.organizer.model
 
 import com.breader.dddbuildingblocks.guitar.application.ManufactureGuitarCommand
 import com.breader.dddbuildingblocks.guitar.model.*
+import java.util.*
 
 data class ManufactureGuitarRequest(
     val availableTunings: List<String>,
@@ -26,6 +27,7 @@ data class ManufactureGuitarRequest(
         )
 
         return ManufactureGuitarCommand(
+            commandId = UUID.randomUUID(),
             tunings = Tunings.with(availableTunings, chosenTuning),
             pickups = Pickups.with(availablePickups, chosenPickup),
             volumeKnobLevel = volumeKnobLevel,

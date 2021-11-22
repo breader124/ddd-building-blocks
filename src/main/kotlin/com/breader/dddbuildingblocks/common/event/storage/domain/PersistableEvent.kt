@@ -1,4 +1,4 @@
-package com.breader.dddbuildingblocks.common.event.storage
+package com.breader.dddbuildingblocks.common.event.storage.domain
 
 import java.util.*
 
