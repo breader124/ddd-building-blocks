@@ -9,6 +9,9 @@ class StoreEventPublisher(
     private val eventMapper: EventMapper
 ) : EventPublisher {
 
-    override fun publish(event: DomainEvent) = storageClient.store(eventMapper.toPersistableEvent(event))
+    override fun publish(streamName: String, event: DomainEvent) = storageClient.store(
+        streamName,
+        eventMapper.toPersistableEvent(event)
+    )
 
 }

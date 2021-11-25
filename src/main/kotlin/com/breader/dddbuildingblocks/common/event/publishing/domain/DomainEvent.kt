@@ -1,6 +1,5 @@
 package com.breader.dddbuildingblocks.common.event.publishing.domain
 
-import java.time.Instant
 import java.util.*
 
 abstract class DomainEvent(
@@ -9,5 +8,5 @@ abstract class DomainEvent(
     val correlationId: UUID, // to easily fetch all events in transaction
     val causationId: UUID,   // to easily recreate chronological order
     val version: Int,        // to make optimistic locking possible
-    val happenedAt: Instant  // to know when event happened
+    val happenedAt: Long     // to know when event happened
 )

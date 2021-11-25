@@ -1,6 +1,5 @@
 package com.breader.dddbuildingblocks.common.event.storage.domain
 
-import java.time.Instant
 import java.util.*
 
 data class PersistableEvent(
@@ -10,7 +9,7 @@ data class PersistableEvent(
     val correlationId: UUID,
     val causationId: UUID,
     val version: Int,
-    val happenedAt: Instant,
+    val happenedAt: Long,
     val eventType: String,
     val eventData: String
 )

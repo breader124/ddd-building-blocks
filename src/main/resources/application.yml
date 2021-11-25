@@ -1,3 +1,3 @@
 event:
   storage:
-    url: esdb://localhost:2113
+    url: esdb://localhost:2113?tls=false

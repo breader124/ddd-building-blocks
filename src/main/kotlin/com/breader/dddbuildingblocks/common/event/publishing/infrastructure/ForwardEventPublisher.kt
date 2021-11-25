@@ -9,8 +9,8 @@ class ForwardEventPublisher(
     private val eventPublisher: EventPublisher
 ) : EventPublisher {
 
-    override fun publish(event: DomainEvent) {
-        eventPublisher.publish(event)
+    override fun publish(streamName: String, event: DomainEvent) {
+        eventPublisher.publish(streamName, event)
         applicationEventPublisher.publishEvent(event)
     }
 
