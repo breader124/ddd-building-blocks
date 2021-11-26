@@ -4,13 +4,21 @@ import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEven
 import com.breader.dddbuildingblocks.common.event.storage.domain.StorageClient
 import com.eventstore.dbclient.EventData
 import com.eventstore.dbclient.EventStoreDBClient
+import com.fasterxml.jackson.databind.ObjectMapper
 
-class EventStoreStorageClient(private val dbClient: EventStoreDBClient) : StorageClient {
+class EventStoreStorageClient(
+    private val dbClient: EventStoreDBClient,
+    private val objectMapper: ObjectMapper = ObjectMapper()
+) : StorageClient {
 
     override fun store(streamName: String, event: PersistableEvent) {
-        val eventData = EventData
-            .builderAsJson(event.eventType, event)
-            .build()
+        val eventData = EventData(
+            event.eventId,
+            event.eventType,
+            "json",
+            objectMapper.writeValueAsBytes(event),
+            ByteArray(0)
+        )
 
         dbClient
             .runCatching {

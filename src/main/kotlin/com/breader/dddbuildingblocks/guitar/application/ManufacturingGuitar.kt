@@ -10,7 +10,7 @@ class ManufacturingGuitar(private val guitars: Guitars) {
     fun handle(command: ManufactureGuitarCommand): GuitarId {
         val newGuitarId = GuitarId()
         val guitar = Guitar(
-            id = newGuitarId,
+            guitarId = newGuitarId,
             tunings = command.tunings,
             pickups = command.pickups,
             volumeKnob = Knob.withLevel(command.volumeKnobLevel),

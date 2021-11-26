@@ -1,25 +1,33 @@
 package com.breader.dddbuildingblocks.guitar.model
 
+import com.breader.dddbuildingblocks.common.aggregate.AggregateRoot
+import com.breader.dddbuildingblocks.common.event.publishing.domain.DomainEvent
 import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckCode
 import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
-import com.breader.dddbuildingblocks.guitar.model.specification.warmupToneSpecification
+import java.time.Instant
 
 class Guitar(
-    val id: GuitarId,
+    val guitarId: GuitarId,
     var tunings: Tunings,
     var pickups: Pickups,
     var volumeKnob: Knob,
     var toneKnob: Knob
-) {
+) : AggregateRoot() {
 
-    fun playSong(partToPlay: PartToPlay) {
+    fun playSong(partToPlay: PartToPlay): List<DomainEvent> {
         tuneFor(partToPlay)
         adjustToneFor(partToPlay)
+
+        return domainEvents
     }
 
-    private fun tuneFor(partToPlay: PartToPlay){
+    private fun tuneFor(partToPlay: PartToPlay) {
+        val actualTuning = tunings.chosen
         val desiredTuning = partToPlay.tuning
-        tunings = tunings.tune(desiredTuning)
+        if (actualTuning != desiredTuning) {
+            tunings = tunings.tune(desiredTuning)
+            domainEvents.add(Tuned(guitarId.id, Instant.now(), actualTuning, desiredTuning))
+        }
     }
 
     private fun adjustToneFor(partToPlay: PartToPlay): Boolean {
@@ -46,31 +54,30 @@ class Guitar(
         toneSpecResult.codes.forEach {
             if (it == ToneCheckCode.INVALID_VOL_KNOB_LEVEL) {
                 toneSpecResult.desiredVolKnobLevel?.also { level ->
+                    val actualVolumeLevel = volumeKnob.level
                     volumeKnob = Knob.withLevel(level)
+                    domainEvents.add(VolKnobAdjusted(guitarId.id, Instant.now(), actualVolumeLevel, level))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.INVALID_TONE_KNOB_LEVEL) {
                 toneSpecResult.desiredToneKnobLevel?.also { level ->
+                    val actualToneKnobLevel = toneKnob.level
                     toneKnob = Knob.withLevel(level)
+                    domainEvents.add(ToneKnobAdjusted(guitarId.id, Instant.now(), actualToneKnobLevel, level))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.WRONG_PICKUP_CHOSEN) {
                 toneSpecResult.desiredPickup?.also { pickup ->
+                    val actuallyChosenPickup = pickups.chosen
                     pickups = pickups.switch(pickup)
+                    domainEvents.add(PickupSwitched(guitarId.id, Instant.now(), actuallyChosenPickup, pickup))
                     existingProblems.remove(it)
                 }
             }
         }
         return existingProblems
-    }
-
-    fun playWarmUp(){
-        val toneCheckResult = warmupToneSpecification.isSatisfiedBy(this)
-        if (toneCheckResult.codes.contains(ToneCheckCode.INVALID_VOL_KNOB_LEVEL)) {
-            volumeKnob = Knob.withLevel(0)
-        }
     }
 
 }

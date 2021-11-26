@@ -5,7 +5,7 @@ import java.util.*
 data class PersistableEvent(
     val eventId: UUID,
     val aggregateId: UUID,
-//    val userId: UUID,         // commented out as on the current stage, security and user management is not enabled
+    val userId: UUID,
     val correlationId: UUID,
     val causationId: UUID,
     val version: Int,

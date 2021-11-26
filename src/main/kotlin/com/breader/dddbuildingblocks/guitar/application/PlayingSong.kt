@@ -1,11 +1,16 @@
 package com.breader.dddbuildingblocks.guitar.application
 
+import com.breader.dddbuildingblocks.common.event.publishing.domain.EventPublisher
 import com.breader.dddbuildingblocks.guitar.model.Guitars
 import com.breader.dddbuildingblocks.guitar.model.PartToPlay
 import com.breader.dddbuildingblocks.guitar.model.ToneSpec
 
-class PlayingSong(private val guitars: Guitars) {
+class PlayingSong(
+    private val guitars: Guitars,
+    private val eventPublisher: EventPublisher
+) {
 
+    // TODO decide on transaction boundaries
     fun handle(command: PlayingSongCommand) {
         val guitar = guitars.findById(command.guitarId) ?: throw NoSuchElementException()
 
@@ -13,6 +18,7 @@ class PlayingSong(private val guitars: Guitars) {
         guitar.playSong(partToPlay)
 
         guitars.save(guitar)
+        eventPublisher.publish("guitar", guitar.domainEvents)
     }
 
     private fun preparePartToPlay(command: PlayingSongCommand): PartToPlay {
