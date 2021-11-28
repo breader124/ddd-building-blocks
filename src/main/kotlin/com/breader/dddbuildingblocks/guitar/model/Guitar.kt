@@ -11,8 +11,9 @@ class Guitar(
     var tunings: Tunings,
     var pickups: Pickups,
     var volumeKnob: Knob,
-    var toneKnob: Knob
-) : AggregateRoot() {
+    var toneKnob: Knob,
+    version: Int,
+) : AggregateRoot(version) {
 
     fun playSong(partToPlay: PartToPlay): List<DomainEvent> {
         tuneFor(partToPlay)
@@ -26,7 +27,7 @@ class Guitar(
         val desiredTuning = partToPlay.tuning
         if (actualTuning != desiredTuning) {
             tunings = tunings.tune(desiredTuning)
-            domainEvents.add(Tuned(guitarId.id, Instant.now(), actualTuning, desiredTuning))
+            domainEvents.add(Tuned(guitarId.id, Instant.now(), version, actualTuning, desiredTuning))
         }
     }
 
@@ -56,7 +57,7 @@ class Guitar(
                 toneSpecResult.desiredVolKnobLevel?.also { level ->
                     val actualVolumeLevel = volumeKnob.level
                     volumeKnob = Knob.withLevel(level)
-                    domainEvents.add(VolKnobAdjusted(guitarId.id, Instant.now(), actualVolumeLevel, level))
+                    domainEvents.add(VolKnobAdjusted(guitarId.id, Instant.now(), version, actualVolumeLevel, level))
                     existingProblems.remove(it)
                 }
             }
@@ -64,7 +65,7 @@ class Guitar(
                 toneSpecResult.desiredToneKnobLevel?.also { level ->
                     val actualToneKnobLevel = toneKnob.level
                     toneKnob = Knob.withLevel(level)
-                    domainEvents.add(ToneKnobAdjusted(guitarId.id, Instant.now(), actualToneKnobLevel, level))
+                    domainEvents.add(ToneKnobAdjusted(guitarId.id, Instant.now(), version, actualToneKnobLevel, level))
                     existingProblems.remove(it)
                 }
             }
@@ -72,7 +73,7 @@ class Guitar(
                 toneSpecResult.desiredPickup?.also { pickup ->
                     val actuallyChosenPickup = pickups.chosen
                     pickups = pickups.switch(pickup)
-                    domainEvents.add(PickupSwitched(guitarId.id, Instant.now(), actuallyChosenPickup, pickup))
+                    domainEvents.add(PickupSwitched(guitarId.id, Instant.now(), version, actuallyChosenPickup, pickup))
                     existingProblems.remove(it)
                 }
             }

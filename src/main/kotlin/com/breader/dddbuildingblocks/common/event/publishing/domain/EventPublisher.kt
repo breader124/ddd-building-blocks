@@ -1,11 +1,17 @@
 package com.breader.dddbuildingblocks.common.event.publishing.domain
 
+import java.util.*
+
 interface EventPublisher {
     fun publish(streamName: String, event: DomainEvent)
 
     fun publish(streamName: String, events: List<DomainEvent>) {
-        events.forEach {
-            publish(streamName, it)
+        val correlationId = UUID.randomUUID()
+
+        events.forEachIndexed { index, event ->
+            event.correlatesWith(correlationId)
+            event.causedBy(events.getOrNull(index - 1)?.eventId)
+            publish(streamName, event)
         }
     }
 }

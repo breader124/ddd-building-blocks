@@ -1,5 +1,6 @@
 package com.breader.dddbuildingblocks.guitar.infrastructure
 
+import com.breader.dddbuildingblocks.common.event.publishing.domain.EventPublisher
 import com.breader.dddbuildingblocks.guitar.application.ManufacturingGuitar
 import com.breader.dddbuildingblocks.guitar.application.PlayingSong
 import com.breader.dddbuildingblocks.guitar.model.Guitars
@@ -13,9 +14,12 @@ class GuitarConfig {
     fun guitars(): Guitars = InMemoryGuitarRepository()
 
     @Bean
-    fun manufacturingGuitar(): ManufacturingGuitar = ManufacturingGuitar(guitars())
+    fun manufacturingGuitar(guitars: Guitars): ManufacturingGuitar = ManufacturingGuitar(guitars)
 
     @Bean
-    fun playingSong(): PlayingSong = PlayingSong(guitars())
+    fun playingSong(guitars: Guitars, eventPublisher: EventPublisher): PlayingSong = PlayingSong(
+        guitars,
+        eventPublisher
+    )
 
 }

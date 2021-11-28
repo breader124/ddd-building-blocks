@@ -23,7 +23,7 @@ internal class GuitarTest {
     private var volumeKnob = Knob.withLevel(100)
     private val toneKnob = Knob.withLevel(100)
 
-    private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob)
+    private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob, 0)
 
     private val reachableToneSpec = Specification<Guitar, ToneCheckResult> {
         ToneCheckResult(listOf(ToneCheckCode.OK), null, null, null)

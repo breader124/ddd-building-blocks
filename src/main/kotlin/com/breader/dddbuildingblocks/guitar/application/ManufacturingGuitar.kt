@@ -14,7 +14,8 @@ class ManufacturingGuitar(private val guitars: Guitars) {
             tunings = command.tunings,
             pickups = command.pickups,
             volumeKnob = Knob.withLevel(command.volumeKnobLevel),
-            toneKnob = Knob.withLevel(command.toneKnobLevel)
+            toneKnob = Knob.withLevel(command.toneKnobLevel),
+            version = 0
         )
         guitars.save(guitar)
         return newGuitarId

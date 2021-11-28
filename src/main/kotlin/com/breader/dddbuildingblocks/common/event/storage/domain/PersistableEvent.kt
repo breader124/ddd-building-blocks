@@ -5,11 +5,11 @@ import java.util.*
 data class PersistableEvent(
     val eventId: UUID,
     val aggregateId: UUID,
-    val userId: UUID,
+//    val userId: UUID,             // there's no security context at the moment
     val correlationId: UUID,
-    val causationId: UUID,
+    val causationId: UUID?,
     val version: Int,
     val happenedAt: Long,
     val eventType: String,
-    val eventData: String
+    var eventData: String
 )
