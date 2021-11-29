@@ -15,10 +15,26 @@ class Guitar(
     version: Int,
 ) : AggregateRoot(version) {
 
+    fun apply(tunedEvent: Tuned) {
+        tunings = tunings.tune(tunedEvent.to)
+    }
+
+    fun apply(volKnobAdjusted: VolKnobAdjusted) {
+        volumeKnob = volumeKnob.adjustLevel(volKnobAdjusted.to)
+    }
+
+    fun apply(toneKnobAdjusted: ToneKnobAdjusted) {
+        toneKnob = toneKnob.adjustLevel(toneKnobAdjusted.to)
+    }
+
+    fun apply(pickupSwitched: PickupSwitched) {
+        pickups = pickups.switch(pickupSwitched.to)
+    }
+
     fun playSong(partToPlay: PartToPlay): List<DomainEvent> {
         tuneFor(partToPlay)
         adjustToneFor(partToPlay)
-
+        domainEvents.add(SongPlayed(guitarId.id, Instant.now(), version))
         return domainEvents
     }
 
@@ -31,13 +47,15 @@ class Guitar(
         }
     }
 
-    private fun adjustToneFor(partToPlay: PartToPlay): Boolean {
+    private fun adjustToneFor(partToPlay: PartToPlay) {
         val toneSpecResult = identifyProblemsWithTone(partToPlay)
         if (isThereNoProblemsWithTone(toneSpecResult)) {
-            return true
+            return
         }
         val existingProblems = tryToSolveProblems(toneSpecResult)
-        return existingProblems.isEmpty()
+        if (existingProblems.isNotEmpty()) {
+            throw IllegalStateException("There are still issues with tone setup")
+        }
     }
 
     private fun identifyProblemsWithTone(partToPlay: PartToPlay): ToneCheckResult {
@@ -45,7 +63,7 @@ class Guitar(
         return toneSpec.isSatisfiedBy(this)
     }
 
-    private fun isThereNoProblemsWithTone(toneSpecResult: ToneCheckResult) =
+    private fun isThereNoProblemsWithTone(toneSpecResult: ToneCheckResult): Boolean =
         toneSpecResult.codes.size == 1 && toneSpecResult.codes[0] == ToneCheckCode.OK
 
     private fun tryToSolveProblems(toneSpecResult: ToneCheckResult): MutableList<ToneCheckCode> {

@@ -17,8 +17,7 @@ class PlayingSong(
         val partToPlay = preparePartToPlay(command)
         guitar.playSong(partToPlay)
 
-        guitars.save(guitar)
-        eventPublisher.publish("guitar", guitar.domainEvents)
+        eventPublisher.publish("guitar_${guitar.guitarId.id}", guitar.domainEvents)
     }
 
     private fun preparePartToPlay(command: PlayingSongCommand): PartToPlay {

@@ -43,3 +43,9 @@ class PickupSwitched(
     from: Pickup,
     to: Pickup,
 ) : ParamSwitchedEvent<Pickup>(aggregateId, happenedAt, version, from, to)
+
+class SongPlayed(
+    aggregateId: UUID,
+    happenedAt: Instant,
+    version: Int
+) : DomainEvent(aggregateId, happenedAt, version)
