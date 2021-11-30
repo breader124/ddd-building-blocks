@@ -15,19 +15,19 @@ data class GuitarDTO(
     companion object {
         fun fromDomainModel(guitar: Guitar): GuitarDTO {
             val availableTunings = mutableListOf<String>()
-            guitar.tunings.available.forEach { availableTunings.add(it.name) }
+            guitar.tunings!!.available.forEach { availableTunings.add(it.name) }
 
             val availablePickups = mutableListOf<PickupDTO>()
-            guitar.pickups.available.forEach { availablePickups.add(PickupDTO(it.pickupType.name, it.pickupPosition.name)) }
+            guitar.pickups!!.available.forEach { availablePickups.add(PickupDTO(it.pickupType.name, it.pickupPosition.name)) }
 
-            val chosenPickup = guitar.pickups.chosen
+            val chosenPickup = guitar.pickups!!.chosen
             return GuitarDTO(
                 availableTunings,
-                guitar.tunings.chosen.name,
+                guitar.tunings!!.chosen.name,
                 availablePickups,
                 PickupDTO(chosenPickup.pickupType.name, chosenPickup.pickupPosition.name),
-                guitar.volumeKnob.level,
-                guitar.toneKnob.level
+                guitar.volumeKnob!!.level,
+                guitar.toneKnob!!.level
             )
         }
 

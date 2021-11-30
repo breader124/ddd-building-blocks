@@ -3,56 +3,69 @@ package com.breader.dddbuildingblocks.common.event.storage.infrastructure
 import com.breader.dddbuildingblocks.common.event.publishing.domain.DomainEvent
 import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEvent
 import com.breader.dddbuildingblocks.guitar.model.*
+import com.eventstore.dbclient.EventStoreDBClient
+import com.eventstore.dbclient.ReadResult
 import com.eventstore.dbclient.ResolvedEvent
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import java.lang.Exception
 import java.time.Instant
+import java.util.*
+import java.util.concurrent.CancellationException
+import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class EventMapper(
-    private val objectMapper: ObjectMapper = ObjectMapper()
+    private val eventStoreDBClient: EventStoreDBClient,
+    private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
 ) {
 
-    fun toPersistableEvent(domainEvent: DomainEvent): PersistableEvent = PersistableEvent(
-        eventId = domainEvent.eventId,
-        aggregateId = domainEvent.aggregateId,
-        correlationId = domainEvent.correlationId,
-        causationId = domainEvent.causationId,
-        version = domainEvent.version,
-        happenedAt = domainEvent.happenedAt.epochSecond,
-        eventType = domainEvent.javaClass.typeName,
-        eventData = when (domainEvent) {
-            is ParamSwitchedEvent<*> -> mapDataToJson(domainEvent)
-            else -> ""
-        }
-    )
-
-    private fun <T> mapDataToJson(domainEvent: ParamSwitchedEvent<T>): String {
-        val data = ParamSwitchedEventData(domainEvent.from, domainEvent.to)
-        return objectMapper.writeValueAsString(data)
+    companion object {
+        val eventClassMap: Map<String, String?> = mapOf(
+            "guitar_manufactured_v1" to GuitarManufactured::class.qualifiedName,
+            "guitar_tuned_v1" to Tuned::class.qualifiedName,
+            "vol_knob_adjusted_v1" to VolKnobAdjusted::class.qualifiedName,
+            "tone_knob_adjusted_v1" to ToneKnobAdjusted::class.qualifiedName,
+            "pickup_switched_v1" to PickupSwitched::class.qualifiedName,
+            "song_played_v1" to SongPlayed::class.qualifiedName
+        )
     }
 
-    fun toDomainEvent(persistableEvent: PersistableEvent): DomainEvent {
-        val eventDataAsJson = persistableEvent.eventData
-        val eventData = objectMapper.readValue(eventDataAsJson, ParamSwitchedEventData::class.java)
-
-        val eventId = persistableEvent.eventId
-        val happenedAt = Instant.ofEpochSecond(persistableEvent.happenedAt)
-        val version = persistableEvent.version
-
-        val domainEventClass = Class.forName(persistableEvent.eventType).kotlin
-        return when (domainEventClass) {
-            Tuned::class -> Tuned(eventId, happenedAt, version, eventData.from as Tuning, eventData.to as Tuning)
-            VolKnobAdjusted::class -> VolKnobAdjusted(eventId, happenedAt, version, eventData.from as Int, eventData.to as Int)
-            ToneKnobAdjusted::class -> ToneKnobAdjusted(eventId, happenedAt, version, eventData.from as Int, eventData.to as Int)
-            PickupSwitched::class -> PickupSwitched(eventId, happenedAt, version, eventData.from as Pickup, eventData.to as Pickup)
-            SongPlayed::class -> SongPlayed(eventId, happenedAt, version)
-            else -> throw IllegalArgumentException("Given class ${domainEventClass.qualifiedName} cannot be instantiated")
+    fun enrich(streamId: UUID, domainEvents: List<DomainEvent>): List<PersistableEvent> {
+        val correlationId = UUID.randomUUID()
+        val eventIds = (0..domainEvents.size).map { UUID.randomUUID() }
+        var currentEventRevision = readLastEventRevision(streamId)
+        return domainEvents.mapIndexed { index, domainEvent ->
+            PersistableEvent(
+                eventId = eventIds[index],
+                aggregateId = streamId,
+                correlationId = correlationId,
+                causationId = eventIds.getOrNull(index - 1),
+                version = ++currentEventRevision,
+                happenedAt = Instant.now().epochSecond,
+                eventType = domainEvent.eventType,
+                eventData = objectMapper.writeValueAsString(domainEvent)
+            )
         }
+    }
+
+    private fun readLastEventRevision(streamId: UUID): Long {
+        return try {
+            eventStoreDBClient.readStream(streamId.toString(), 1).get()
+                .events[0]
+                .originalEvent
+                .streamRevision
+                .valueUnsigned
+        } catch (exc: Exception) {
+            0
+        }
+    }
+
+    fun extract(persistableEvent: PersistableEvent): DomainEvent {
+        val data = persistableEvent.eventData
+        val domainEventClassName = eventClassMap[persistableEvent.eventType] ?: throw RuntimeException("Fatal deserialization error")
+        return objectMapper.readValue(data, Class.forName(domainEventClassName)) as DomainEvent
     }
 
 }
-
-data class ParamSwitchedEventData<T>(
-    val from: T,
-    val to: T
-)

@@ -8,7 +8,7 @@ data class PersistableEvent(
 //    val userId: UUID,             // there's no security context at the moment
     val correlationId: UUID,
     val causationId: UUID?,
-    val version: Int,
+    val version: Long,
     val happenedAt: Long,
     val eventType: String,
     var eventData: String

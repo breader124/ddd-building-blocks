@@ -23,7 +23,7 @@ internal class GuitarTest {
     private var volumeKnob = Knob.withLevel(100)
     private val toneKnob = Knob.withLevel(100)
 
-    private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob, 0)
+    private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob)
 
     private val reachableToneSpec = Specification<Guitar, ToneCheckResult> {
         ToneCheckResult(listOf(ToneCheckCode.OK), null, null, null)
@@ -50,7 +50,7 @@ internal class GuitarTest {
     fun should_play_warmup_without_any_complaints() {
         // given
         val volumeKnob = guitar.volumeKnob
-        guitar.volumeKnob = volumeKnob.adjustLevel(0)
+        guitar.volumeKnob = volumeKnob!!.adjustLevel(0)
 
         // when + then
         assertDoesNotThrow {

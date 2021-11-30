@@ -11,10 +11,19 @@ import org.springframework.context.annotation.Configuration
 class StorageConfiguration(@Value("\${event.storage.url}") val eventStoreUrl: String) {
 
     @Bean
-    fun storageClient(): StorageClient {
+    fun eventStoreDBClient(): EventStoreDBClient {
         val eventStoreSettings = EventStoreDBConnectionString.parseOrThrow(eventStoreUrl)
-        val client = EventStoreDBClient.create(eventStoreSettings)
-        return EventStoreStorageClient(client)
+        return EventStoreDBClient.create(eventStoreSettings)
+    }
+
+    @Bean
+    fun eventMapper(eventStoreDBClient: EventStoreDBClient): EventMapper {
+        return EventMapper(eventStoreDBClient)
+    }
+
+    @Bean
+    fun storageClient(eventStoreDBClient: EventStoreDBClient): StorageClient {
+        return EventStoreStorageClient(eventStoreDBClient)
     }
 
 }

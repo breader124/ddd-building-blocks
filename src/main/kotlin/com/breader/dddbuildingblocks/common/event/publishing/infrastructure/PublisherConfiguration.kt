@@ -11,9 +11,6 @@ import org.springframework.context.annotation.Configuration
 class PublisherConfiguration {
 
     @Bean
-    fun eventMapper() = EventMapper()
-
-    @Bean
     fun eventPublisher(
         appEventPublisher: ApplicationEventPublisher,
         storageClient: StorageClient,

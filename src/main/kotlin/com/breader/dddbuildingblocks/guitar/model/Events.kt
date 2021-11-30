@@ -4,48 +4,32 @@ import com.breader.dddbuildingblocks.common.event.publishing.domain.DomainEvent
 import java.time.Instant
 import java.util.*
 
-abstract class ParamSwitchedEvent<T>(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int,
-    val from: T,
-    val to: T
-) : DomainEvent(aggregateId, happenedAt, version)
+
+class GuitarManufactured(
+    val tunings: Tunings,
+    val pickups: Pickups,
+    val volumeKnob: Knob,
+    val toneKnob: Knob,
+) : DomainEvent("guitar_manufactured_v1")
 
 class Tuned(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int,
-    from: Tuning,
-    to: Tuning
-) : ParamSwitchedEvent<Tuning>(aggregateId, happenedAt, version, from, to)
+    val from: Tuning,
+    val to: Tuning
+) : DomainEvent("guitar_tuned_v1")
 
 class VolKnobAdjusted(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int,
-    from: Int,
-    to: Int,
-) : ParamSwitchedEvent<Int>(aggregateId, happenedAt, version, from, to)
+    val from: Int,
+    val to: Int,
+) : DomainEvent("vol_knob_adjusted_v1")
 
 class ToneKnobAdjusted(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int,
-    from: Int,
-    to: Int,
-) : ParamSwitchedEvent<Int>(aggregateId, happenedAt, version, from, to)
+    val from: Int,
+    val to: Int,
+) : DomainEvent("tone_knob_adjusted_v1")
 
 class PickupSwitched(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int,
-    from: Pickup,
-    to: Pickup,
-) : ParamSwitchedEvent<Pickup>(aggregateId, happenedAt, version, from, to)
+    val from: Pickup,
+    val to: Pickup,
+) : DomainEvent("pickup_switched_v1")
 
-class SongPlayed(
-    aggregateId: UUID,
-    happenedAt: Instant,
-    version: Int
-) : DomainEvent(aggregateId, happenedAt, version)
+class SongPlayed : DomainEvent("song_played_v1")

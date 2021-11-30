@@ -4,65 +4,65 @@ import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEven
 import com.breader.dddbuildingblocks.common.event.storage.domain.StorageClient
 import com.eventstore.dbclient.EventData
 import com.eventstore.dbclient.EventStoreDBClient
-import com.eventstore.dbclient.ReadStreamOptions
-import java.io.ByteArrayInputStream
-import java.io.ObjectInputStream
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.util.*
 
 class EventStoreStorageClient(
-    private val dbClient: EventStoreDBClient
+    private val dbClient: EventStoreDBClient,
+    private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
 ) : StorageClient {
 
-    override fun store(streamName: String, event: PersistableEvent) {
+    override fun store(streamId: UUID, events: List<PersistableEvent>) {
         dbClient
             .runCatching {
-                val eventData = EventStoreData(event.eventId, event.aggregateId, event.eventData)
-                val eventMetadata = EventStoreMetadata(event.version, event.happenedAt, event.correlationId, event.causationId)
-                val readyToStoreEvent = EventData.builderAsJson(event.eventType, eventData)
-                    .metadataAsJson(eventMetadata)
-                    .build()
-                appendToStream(streamName, readyToStoreEvent).get()
+                events.forEach { event ->
+                    val eventMetadata = EventStoreMetadata(
+                        event.eventId,
+                        event.aggregateId,
+                        event.version,
+                        event.happenedAt,
+                        event.correlationId,
+                        event.causationId
+                    )
+                    val readyToStoreEvent = EventData.builderAsJson(event.eventType, event.eventData)
+                        .metadataAsJson(eventMetadata)
+                        .build()
+
+                    appendToStream(streamId.toString(), readyToStoreEvent).get()
+                }
             }
             .onFailure {
                 throw it
             }
     }
 
-    override fun fetchEvents(streamName: String): List<PersistableEvent> {
-        return dbClient.readStream(streamName, ReadStreamOptions.get()).get().events
+    override fun fetch(streamId: UUID): List<PersistableEvent> {
+        return dbClient.readStream(streamId.toString()).get().events
             .map {
                 val originalEvent = it.originalEvent
-                val eventStoreData = byteArrayToEventStoreData<EventStoreData>(originalEvent.eventData)
-                val eventStoreMetadata = byteArrayToEventStoreData<EventStoreMetadata>(originalEvent.userMetadata)
+                val eventStoreData = objectMapper.readValue(originalEvent.eventData, String::class.java)
+                val eventStoreMetadata = objectMapper.readValue(originalEvent.userMetadata, EventStoreMetadata::class.java)
                 PersistableEvent(
-                    eventId = eventStoreData.eventId,
-                    aggregateId = eventStoreData.aggregateID,
-                    correlationId = eventStoreMetadata.correlationId,
+                    eventId = eventStoreMetadata.eventId!!,
+                    aggregateId = eventStoreMetadata.aggregateID!!,
+                    correlationId = eventStoreMetadata.correlationId!!,
                     causationId = eventStoreMetadata.causationId,
-                    version = eventStoreMetadata.version,
-                    happenedAt = eventStoreMetadata.happenedAt,
+                    version = eventStoreMetadata.version!!,
+                    happenedAt = eventStoreMetadata.happenedAt!!,
                     eventType = originalEvent.eventType,
-                    eventData = eventStoreData.data
+                    eventData = eventStoreData
                 )
             }
     }
 
-    private fun <T> byteArrayToEventStoreData(byteArray: ByteArray): T {
-        ObjectInputStream(ByteArrayInputStream(byteArray)).use {
-            return it.readObject() as T
-        }
-    }
 }
 
-data class EventStoreData(
-    val eventId: UUID,
-    val aggregateID: UUID,
-    val data: String
-)
-
 data class EventStoreMetadata(
-    val version: Int,
-    val happenedAt: Long,
-    val correlationId: UUID,
-    val causationId: UUID?
+    var eventId: UUID? = null,
+    var aggregateID: UUID? = null,
+    var version: Long? = null,
+    var happenedAt: Long? = null,
+    var correlationId: UUID? = null,
+    var causationId: UUID? = null
 )

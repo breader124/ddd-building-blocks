@@ -11,13 +11,13 @@ class ToneSpec private constructor(
 
     override fun isSatisfiedBy(target: Guitar): ToneCheckResult {
         val toneCheckCodeList = mutableListOf<ToneCheckCode>()
-        if (target.volumeKnob.level != volumeLevel) {
+        if (target.volumeKnob?.level != volumeLevel) {
             toneCheckCodeList.add(ToneCheckCode.INVALID_VOL_KNOB_LEVEL)
         }
-        if (target.toneKnob.level != toneLevel) {
+        if (target.toneKnob?.level != toneLevel) {
             toneCheckCodeList.add(ToneCheckCode.INVALID_TONE_KNOB_LEVEL)
         }
-        if (target.pickups.chosen != pickup) {
+        if (target.pickups?.chosen != pickup) {
             toneCheckCodeList.add(ToneCheckCode.WRONG_PICKUP_CHOSEN)
         }
 

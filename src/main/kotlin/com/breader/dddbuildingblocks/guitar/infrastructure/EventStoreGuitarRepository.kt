@@ -11,8 +11,9 @@ class EventStoreGuitarRepository(
     private val eventMapper: EventMapper
 ) : Guitars {
 
-    override fun findById(id: GuitarId): Guitar? {
-        TODO("Implement me")
+    override fun findById(id: GuitarId): Guitar {
+        val events = storageClient.fetch(id.id).map(eventMapper::extract)
+        return Guitar(id).project(events)
     }
 
 }

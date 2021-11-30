@@ -1,6 +1,8 @@
 package com.breader.dddbuildingblocks.common.event.storage.domain
 
+import java.util.*
+
 interface StorageClient {
-    fun store(streamName: String, event: PersistableEvent)
-    fun fetchEvents(streamName: String): List<PersistableEvent>
+    fun store(streamId: UUID, events: List<PersistableEvent>)
+    fun fetch(streamId: UUID): List<PersistableEvent>
 }

@@ -2,7 +2,11 @@ package com.breader.dddbuildingblocks.guitar.model
 
 class Tunings private constructor(val available: List<Tuning>, val chosen: Tuning) {
     companion object {
-        fun with(available: List<Tuning>, chosen: Tuning) = Tunings(available, chosen)
+        fun with(available: List<Tuning>, chosen: Tuning): Tunings {
+            if (available.isEmpty()) throw IllegalArgumentException("You must pass at least one tuning")
+            if (!available.contains(chosen)) throw IllegalArgumentException("Tuning list must contain chosen one")
+            return Tunings(available, chosen)
+        }
     }
 
     fun tune(chosen: Tuning): Tunings {
