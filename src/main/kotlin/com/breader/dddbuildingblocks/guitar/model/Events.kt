@@ -10,26 +10,31 @@ class GuitarManufactured(
     val pickups: Pickups,
     val volumeKnob: Knob,
     val toneKnob: Knob,
-) : DomainEvent("guitar_manufactured_v1")
+    version: Int
+) : DomainEvent("guitar_manufactured_v1", version)
 
 class Tuned(
     val from: Tuning,
-    val to: Tuning
-) : DomainEvent("guitar_tuned_v1")
+    val to: Tuning,
+    version: Int
+) : DomainEvent("guitar_tuned_v1", version)
 
 class VolKnobAdjusted(
     val from: Int,
     val to: Int,
-) : DomainEvent("vol_knob_adjusted_v1")
+    version: Int
+) : DomainEvent("vol_knob_adjusted_v1", version)
 
 class ToneKnobAdjusted(
     val from: Int,
     val to: Int,
-) : DomainEvent("tone_knob_adjusted_v1")
+    version: Int
+) : DomainEvent("tone_knob_adjusted_v1", version)
 
 class PickupSwitched(
     val from: Pickup,
     val to: Pickup,
-) : DomainEvent("pickup_switched_v1")
+    version: Int
+) : DomainEvent("pickup_switched_v1", version)
 
-class SongPlayed : DomainEvent("song_played_v1")
+class SongPlayed(version: Int) : DomainEvent("song_played_v1", version)

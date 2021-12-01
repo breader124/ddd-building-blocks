@@ -10,14 +10,13 @@ class PlayingSong(
     private val eventPublisher: EventPublisher
 ) {
 
-    // TODO decide on transaction boundaries
     fun handle(command: PlayingSongCommand) {
         val guitar = guitars.findById(command.guitarId) ?: throw NoSuchElementException()
 
         val partToPlay = preparePartToPlay(command)
-        guitar.playSong(partToPlay)
+        val events = guitar.playSong(partToPlay)
 
-        eventPublisher.publish(guitar.guitarId.id, guitar.domainEvents)
+        eventPublisher.publish(guitar.guitarId.id, guitar.version, events)
     }
 
     private fun preparePartToPlay(command: PlayingSongCommand): PartToPlay {

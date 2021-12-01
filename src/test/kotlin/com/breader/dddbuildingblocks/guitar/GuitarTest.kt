@@ -4,11 +4,9 @@ import com.breader.dddbuildingblocks.common.Specification
 import com.breader.dddbuildingblocks.guitar.model.*
 import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckCode
 import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import java.lang.IllegalArgumentException
 
 internal class GuitarTest {
 
@@ -23,7 +21,7 @@ internal class GuitarTest {
     private var volumeKnob = Knob.withLevel(100)
     private val toneKnob = Knob.withLevel(100)
 
-    private val guitar = Guitar(guitarId, tunings, pickups, volumeKnob, toneKnob)
+    private val guitar = Guitar(guitarId, 0, tunings, pickups, volumeKnob, toneKnob)
 
     private val reachableToneSpec = Specification<Guitar, ToneCheckResult> {
         ToneCheckResult(listOf(ToneCheckCode.OK), null, null, null)

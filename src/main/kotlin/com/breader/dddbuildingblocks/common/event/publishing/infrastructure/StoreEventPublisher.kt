@@ -11,9 +11,9 @@ class StoreEventPublisher(
     private val eventMapper: EventMapper
 ) : EventPublisher {
 
-    override fun publish(streamId: UUID, events: List<DomainEvent>) = storageClient.store(
+    override fun publish(streamId: UUID, streamVersion: Int, events: List<DomainEvent>) = storageClient.store(
         streamId,
-        eventMapper.enrich(streamId, events)
+        eventMapper.enrich(streamId, streamVersion, events)
     )
 
 }

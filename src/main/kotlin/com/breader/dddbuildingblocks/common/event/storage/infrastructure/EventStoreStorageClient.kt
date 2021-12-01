@@ -2,8 +2,7 @@ package com.breader.dddbuildingblocks.common.event.storage.infrastructure
 
 import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEvent
 import com.breader.dddbuildingblocks.common.event.storage.domain.StorageClient
-import com.eventstore.dbclient.EventData
-import com.eventstore.dbclient.EventStoreDBClient
+import com.eventstore.dbclient.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.util.*
@@ -29,7 +28,12 @@ class EventStoreStorageClient(
                         .metadataAsJson(eventMetadata)
                         .build()
 
-                    appendToStream(streamId.toString(), readyToStoreEvent).get()
+                    val options = if (event.version == 0L) {
+                        AppendToStreamOptions.get().expectedRevision(ExpectedRevision.NO_STREAM)
+                    } else {
+                        AppendToStreamOptions.get().expectedRevision(event.version)
+                    }
+                    appendToStream(streamId.toString(), options, readyToStoreEvent).get()
                 }
             }
             .onFailure {
@@ -44,12 +48,12 @@ class EventStoreStorageClient(
                 val eventStoreData = objectMapper.readValue(originalEvent.eventData, String::class.java)
                 val eventStoreMetadata = objectMapper.readValue(originalEvent.userMetadata, EventStoreMetadata::class.java)
                 PersistableEvent(
-                    eventId = eventStoreMetadata.eventId!!,
-                    aggregateId = eventStoreMetadata.aggregateID!!,
-                    correlationId = eventStoreMetadata.correlationId!!,
+                    eventId = eventStoreMetadata.eventId,
+                    aggregateId = eventStoreMetadata.aggregateID,
+                    correlationId = eventStoreMetadata.correlationId,
                     causationId = eventStoreMetadata.causationId,
-                    version = eventStoreMetadata.version!!,
-                    happenedAt = eventStoreMetadata.happenedAt!!,
+                    version = eventStoreMetadata.version,
+                    happenedAt = eventStoreMetadata.happenedAt,
                     eventType = originalEvent.eventType,
                     eventData = eventStoreData
                 )
@@ -59,10 +63,10 @@ class EventStoreStorageClient(
 }
 
 data class EventStoreMetadata(
-    var eventId: UUID? = null,
-    var aggregateID: UUID? = null,
-    var version: Long? = null,
-    var happenedAt: Long? = null,
-    var correlationId: UUID? = null,
-    var causationId: UUID? = null
+    val eventId: UUID,
+    val aggregateID: UUID,
+    val version: Long,
+    val happenedAt: Long,
+    val correlationId: UUID,
+    val causationId: UUID?
 )

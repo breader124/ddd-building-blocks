@@ -15,9 +15,10 @@ class ManufacturingGuitar(
             tunings = command.tunings,
             pickups = command.pickups,
             volumeKnob = Knob.withLevel(command.volumeKnobLevel),
-            toneKnob = Knob.withLevel(command.toneKnobLevel)
+            toneKnob = Knob.withLevel(command.toneKnobLevel),
+            version = 0 // FIXME version cannot be 0 here
         )
-        eventPublisher.publish(newGuitarId.id, listOf(guitarManufactured))
+        eventPublisher.publish(newGuitarId.id, 0, listOf(guitarManufactured))
         return newGuitarId
     }
 

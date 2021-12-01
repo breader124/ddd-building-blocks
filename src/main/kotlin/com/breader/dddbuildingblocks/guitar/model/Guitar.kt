@@ -7,11 +7,12 @@ import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
 
 class Guitar(
     val guitarId: GuitarId,
+    version: Int,
     var tunings: Tunings? = null,
     var pickups: Pickups? = null,
     var volumeKnob: Knob? = null,
-    var toneKnob: Knob? = null
-) : AggregateRoot() {
+    var toneKnob: Knob? = null,
+) : AggregateRoot(version) {
 
     fun project(events: List<DomainEvent>): Guitar {
         events.forEach {
@@ -52,16 +53,15 @@ class Guitar(
     fun playSong(partToPlay: PartToPlay): List<DomainEvent> {
         tuneFor(partToPlay)
         adjustToneFor(partToPlay)
-        domainEvents.add(SongPlayed())
-        return domainEvents
+        addEvent(SongPlayed(version))
+        return getAndClearEvents()
     }
 
     private fun tuneFor(partToPlay: PartToPlay) {
         val actualTuning = tunings?.chosen
         val desiredTuning = partToPlay.tuning
         if (actualTuning != desiredTuning) {
-            tunings = tunings?.tune(desiredTuning)
-            domainEvents.add(Tuned(actualTuning!!, desiredTuning))
+            addEvent(Tuned(actualTuning!!, desiredTuning, version))
         }
     }
 
@@ -91,25 +91,19 @@ class Guitar(
         toneSpecResult.codes.forEach {
             if (it == ToneCheckCode.INVALID_VOL_KNOB_LEVEL) {
                 toneSpecResult.desiredVolKnobLevel?.also { level ->
-                    val actualVolumeLevel = volumeKnob?.level
-                    volumeKnob = Knob.withLevel(level)
-                    domainEvents.add(VolKnobAdjusted(actualVolumeLevel!!, level))
+                    addEvent(VolKnobAdjusted(volumeKnob?.level!!, level, version))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.INVALID_TONE_KNOB_LEVEL) {
                 toneSpecResult.desiredToneKnobLevel?.also { level ->
-                    val actualToneKnobLevel = toneKnob?.level
-                    toneKnob = Knob.withLevel(level)
-                    domainEvents.add(ToneKnobAdjusted(actualToneKnobLevel!!, level))
+                    addEvent(ToneKnobAdjusted(toneKnob?.level!!, level, version))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.WRONG_PICKUP_CHOSEN) {
                 toneSpecResult.desiredPickup?.also { pickup ->
-                    val actuallyChosenPickup = pickups?.chosen
-                    pickups = pickups?.switch(pickup)
-                    domainEvents.add(PickupSwitched(actuallyChosenPickup!!, pickup))
+                    addEvent(PickupSwitched(pickups?.chosen!!, pickup, version))
                     existingProblems.remove(it)
                 }
             }

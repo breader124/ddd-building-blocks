@@ -4,17 +4,10 @@ import com.breader.dddbuildingblocks.common.event.publishing.domain.DomainEvent
 import com.breader.dddbuildingblocks.common.event.storage.domain.PersistableEvent
 import com.breader.dddbuildingblocks.guitar.model.*
 import com.eventstore.dbclient.EventStoreDBClient
-import com.eventstore.dbclient.ReadResult
-import com.eventstore.dbclient.ResolvedEvent
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import java.lang.Exception
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.CancellationException
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 class EventMapper(
     private val eventStoreDBClient: EventStoreDBClient,
@@ -32,17 +25,16 @@ class EventMapper(
         )
     }
 
-    fun enrich(streamId: UUID, domainEvents: List<DomainEvent>): List<PersistableEvent> {
+    fun enrich(streamId: UUID, streamVersion: Int, domainEvents: List<DomainEvent>): List<PersistableEvent> {
         val correlationId = UUID.randomUUID()
         val eventIds = (0..domainEvents.size).map { UUID.randomUUID() }
-        var currentEventRevision = readLastEventRevision(streamId)
         return domainEvents.mapIndexed { index, domainEvent ->
             PersistableEvent(
                 eventId = eventIds[index],
                 aggregateId = streamId,
                 correlationId = correlationId,
                 causationId = eventIds.getOrNull(index - 1),
-                version = ++currentEventRevision,
+                version = streamVersion.toLong(),
                 happenedAt = Instant.now().epochSecond,
                 eventType = domainEvent.eventType,
                 eventData = objectMapper.writeValueAsString(domainEvent)
@@ -52,7 +44,8 @@ class EventMapper(
 
     private fun readLastEventRevision(streamId: UUID): Long {
         return try {
-            eventStoreDBClient.readStream(streamId.toString(), 1).get()
+            eventStoreDBClient.readStream(streamId.toString(), 1)
+                .get()
                 .events[0]
                 .originalEvent
                 .streamRevision
