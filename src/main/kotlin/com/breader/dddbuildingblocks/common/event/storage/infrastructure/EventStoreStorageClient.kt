@@ -28,10 +28,11 @@ class EventStoreStorageClient(
                         .metadataAsJson(eventMetadata)
                         .build()
 
-                    val options = if (event.version == 0L) {
-                        AppendToStreamOptions.get().expectedRevision(ExpectedRevision.NO_STREAM)
+                    val options = AppendToStreamOptions.get()
+                    if (event.version == 0L) {
+                        options.expectedRevision(ExpectedRevision.NO_STREAM)
                     } else {
-                        AppendToStreamOptions.get().expectedRevision(event.version)
+                        options.expectedRevision(event.version - 1)
                     }
                     appendToStream(streamId.toString(), options, readyToStoreEvent).get()
                 }

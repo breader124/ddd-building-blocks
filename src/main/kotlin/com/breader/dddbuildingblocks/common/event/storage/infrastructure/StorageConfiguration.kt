@@ -17,9 +17,7 @@ class StorageConfiguration(@Value("\${event.storage.url}") val eventStoreUrl: St
     }
 
     @Bean
-    fun eventMapper(eventStoreDBClient: EventStoreDBClient): EventMapper {
-        return EventMapper(eventStoreDBClient)
-    }
+    fun eventMapper(): EventMapper = EventMapper()
 
     @Bean
     fun storageClient(eventStoreDBClient: EventStoreDBClient): StorageClient {

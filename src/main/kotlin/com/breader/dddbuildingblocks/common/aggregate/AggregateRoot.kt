@@ -2,7 +2,7 @@ package com.breader.dddbuildingblocks.common.aggregate
 
 import com.breader.dddbuildingblocks.common.event.publishing.domain.DomainEvent
 
-open class AggregateRoot(val version: Int) {
+open class AggregateRoot(var aggregateVersion: Int) {
     private val domainEvents = mutableListOf<DomainEvent>()
 
     fun addEvent(domainEvent: DomainEvent) = domainEvents.add(domainEvent)

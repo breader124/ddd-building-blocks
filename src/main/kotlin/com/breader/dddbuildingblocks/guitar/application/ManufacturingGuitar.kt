@@ -3,7 +3,6 @@ package com.breader.dddbuildingblocks.guitar.application
 import com.breader.dddbuildingblocks.common.event.publishing.domain.EventPublisher
 import com.breader.dddbuildingblocks.guitar.model.GuitarId
 import com.breader.dddbuildingblocks.guitar.model.GuitarManufactured
-import com.breader.dddbuildingblocks.guitar.model.Knob
 
 class ManufacturingGuitar(
     private val eventPublisher: EventPublisher
@@ -14,11 +13,11 @@ class ManufacturingGuitar(
         val guitarManufactured = GuitarManufactured(
             tunings = command.tunings,
             pickups = command.pickups,
-            volumeKnob = Knob.withLevel(command.volumeKnobLevel),
-            toneKnob = Knob.withLevel(command.toneKnobLevel),
-            version = 0 // FIXME version cannot be 0 here
+            volumeKnob = command.volumeKnob,
+            toneKnob = command.toneKnob,
+            aggregateVersion = 0
         )
-        eventPublisher.publish(newGuitarId.id, 0, listOf(guitarManufactured))
+        eventPublisher.publish(newGuitarId.id, listOf(guitarManufactured))
         return newGuitarId
     }
 

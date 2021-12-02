@@ -30,8 +30,8 @@ data class ManufactureGuitarRequest(
             commandId = UUID.randomUUID(),
             tunings = Tunings.with(availableTunings, chosenTuning),
             pickups = Pickups.with(availablePickups, chosenPickup),
-            volumeKnobLevel = volumeKnobLevel,
-            toneKnobLevel = toneKnobLevel
+            volumeKnob = Knob.withLevel(volumeKnobLevel),
+            toneKnob = Knob.withLevel(toneKnobLevel)
         )
     }
 

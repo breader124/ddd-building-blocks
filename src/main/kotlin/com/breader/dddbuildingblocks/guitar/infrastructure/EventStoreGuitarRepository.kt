@@ -13,7 +13,7 @@ class EventStoreGuitarRepository(
 
     override fun findById(id: GuitarId): Guitar {
         val events = storageClient.fetch(id.id).map(eventMapper::extract)
-        return Guitar(id, events[0].version).project(events)
+        return Guitar(id, events[events.size - 1].aggregateVersion).project(events)
     }
 
 }

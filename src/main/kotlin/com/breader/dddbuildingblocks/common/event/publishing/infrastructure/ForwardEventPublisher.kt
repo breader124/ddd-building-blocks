@@ -10,8 +10,8 @@ class ForwardEventPublisher(
     private val eventPublisher: EventPublisher
 ) : EventPublisher {
 
-    override fun publish(streamId: UUID, streamVersion: Int, events: List<DomainEvent>) {
-        eventPublisher.publish(streamId, streamVersion, events)
+    override fun publish(streamId: UUID, events: List<DomainEvent>) {
+        eventPublisher.publish(streamId, events)
         events.forEach { applicationEventPublisher.publishEvent(it) }
     }
 

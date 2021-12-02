@@ -10,7 +10,6 @@ import java.time.Instant
 import java.util.*
 
 class EventMapper(
-    private val eventStoreDBClient: EventStoreDBClient,
     private val objectMapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
 ) {
 
@@ -25,7 +24,7 @@ class EventMapper(
         )
     }
 
-    fun enrich(streamId: UUID, streamVersion: Int, domainEvents: List<DomainEvent>): List<PersistableEvent> {
+    fun enrich(streamId: UUID, domainEvents: List<DomainEvent>): List<PersistableEvent> {
         val correlationId = UUID.randomUUID()
         val eventIds = (0..domainEvents.size).map { UUID.randomUUID() }
         return domainEvents.mapIndexed { index, domainEvent ->
@@ -34,24 +33,11 @@ class EventMapper(
                 aggregateId = streamId,
                 correlationId = correlationId,
                 causationId = eventIds.getOrNull(index - 1),
-                version = streamVersion.toLong(),
+                version = domainEvent.aggregateVersion.toLong(),
                 happenedAt = Instant.now().epochSecond,
                 eventType = domainEvent.eventType,
                 eventData = objectMapper.writeValueAsString(domainEvent)
             )
-        }
-    }
-
-    private fun readLastEventRevision(streamId: UUID): Long {
-        return try {
-            eventStoreDBClient.readStream(streamId.toString(), 1)
-                .get()
-                .events[0]
-                .originalEvent
-                .streamRevision
-                .valueUnsigned
-        } catch (exc: Exception) {
-            0
         }
     }
 

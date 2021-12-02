@@ -7,9 +7,11 @@ import com.breader.dddbuildingblocks.guitar.model.Guitars
 import com.breader.dddbuildingblocks.organizer.model.GuitarDTO
 import com.breader.dddbuildingblocks.organizer.model.ManufactureGuitarRequest
 import com.breader.dddbuildingblocks.organizer.model.PlaySongRequest
+import com.eventstore.dbclient.WrongExpectedVersionException
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -43,6 +45,14 @@ class GuitarController(
     fun playSong(@PathVariable guitarId: UUID, @RequestBody request: PlaySongRequest): ResponseEntity<EntityModel<Void>> {
         playingSong.handle(request.toCommand(guitarId))
         return ResponseEntity.noContent().build()
+    }
+
+    @ExceptionHandler(WrongExpectedVersionException::class)
+    fun handleWrongExpectedRevisionException(exc: WrongExpectedVersionException): ResponseEntity<ProcessingError> {
+        // TODO there should be an attempt made to retry applying command until this response is returned
+        return ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(ProcessingError("Too many concurrent attempts to play song, please try again later"))
     }
 
     @ExceptionHandler(IllegalArgumentException::class)

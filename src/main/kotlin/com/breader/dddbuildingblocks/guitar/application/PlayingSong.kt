@@ -16,14 +16,14 @@ class PlayingSong(
         val partToPlay = preparePartToPlay(command)
         val events = guitar.playSong(partToPlay)
 
-        eventPublisher.publish(guitar.guitarId.id, guitar.version, events)
+        eventPublisher.publish(guitar.guitarId.id, events)
     }
 
     private fun preparePartToPlay(command: PlayingSongCommand): PartToPlay {
         val customToneSpec = ToneSpec.Builder()
             .pickup(command.pickup)
-            .toneLevel(command.toneLevel)
-            .volumeLevel(command.volumeLevel)
+            .toneLevel(command.toneKnob.level)
+            .volumeLevel(command.volumeKnob.level)
             .build()
         return PartToPlay(command.tuning, customToneSpec)
     }

@@ -7,12 +7,12 @@ import com.breader.dddbuildingblocks.guitar.model.specification.ToneCheckResult
 
 class Guitar(
     val guitarId: GuitarId,
-    version: Int,
+    aggregateVersion: Int,
     var tunings: Tunings? = null,
     var pickups: Pickups? = null,
     var volumeKnob: Knob? = null,
     var toneKnob: Knob? = null,
-) : AggregateRoot(version) {
+) : AggregateRoot(aggregateVersion) {
 
     fun project(events: List<DomainEvent>): Guitar {
         events.forEach {
@@ -53,7 +53,7 @@ class Guitar(
     fun playSong(partToPlay: PartToPlay): List<DomainEvent> {
         tuneFor(partToPlay)
         adjustToneFor(partToPlay)
-        addEvent(SongPlayed(version))
+        addEvent(SongPlayed(++aggregateVersion))
         return getAndClearEvents()
     }
 
@@ -61,7 +61,7 @@ class Guitar(
         val actualTuning = tunings?.chosen
         val desiredTuning = partToPlay.tuning
         if (actualTuning != desiredTuning) {
-            addEvent(Tuned(actualTuning!!, desiredTuning, version))
+            addEvent(Tuned(actualTuning!!, desiredTuning, ++aggregateVersion))
         }
     }
 
@@ -91,19 +91,19 @@ class Guitar(
         toneSpecResult.codes.forEach {
             if (it == ToneCheckCode.INVALID_VOL_KNOB_LEVEL) {
                 toneSpecResult.desiredVolKnobLevel?.also { level ->
-                    addEvent(VolKnobAdjusted(volumeKnob?.level!!, level, version))
+                    addEvent(VolKnobAdjusted(volumeKnob?.level!!, level, ++aggregateVersion))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.INVALID_TONE_KNOB_LEVEL) {
                 toneSpecResult.desiredToneKnobLevel?.also { level ->
-                    addEvent(ToneKnobAdjusted(toneKnob?.level!!, level, version))
+                    addEvent(ToneKnobAdjusted(toneKnob?.level!!, level, ++aggregateVersion))
                     existingProblems.remove(it)
                 }
             }
             if (it == ToneCheckCode.WRONG_PICKUP_CHOSEN) {
                 toneSpecResult.desiredPickup?.also { pickup ->
-                    addEvent(PickupSwitched(pickups?.chosen!!, pickup, version))
+                    addEvent(PickupSwitched(pickups?.chosen!!, pickup, ++aggregateVersion))
                     existingProblems.remove(it)
                 }
             }

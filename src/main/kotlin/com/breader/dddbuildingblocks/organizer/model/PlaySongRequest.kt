@@ -18,8 +18,8 @@ data class PlaySongRequest(
             GuitarId(guitarId),
             Tuning.valueOf(tuning),
             Pickup.ofTypeAndPos(PickupType.valueOf(pickupType), PickupPosition.valueOf(pickupPos)),
-            volumeLevel,
-            toneLevel
+            Knob.withLevel(volumeLevel),
+            Knob.withLevel(toneLevel)
         )
     }
 
