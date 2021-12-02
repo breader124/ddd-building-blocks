@@ -16,3 +16,10 @@ Please also notice that Guitar aggregate doesn't contain actions like changing t
 
 _Please note the project is being actively developed and might change from day to day. If you want to proceed on your own, just checkout to particular
 commit and fork repo._
+
+## What I've observed and learned
+- Implementing optimistic concurrency in case of event sourcing is not a trivial thing to achieve and should be designed better than I did. For this project it's clearly visible it's not a thing, that received enough focus on right development stage and that's why it's done poorly taking design into consideration. On the other hand, it seems to be working solution, so it can be taken as starting point for further improvements
+- It's challenging to enrich events properly, when I tried to keep domain events perfectly clear. That means that I wanted them to contain only their type and business related information and I managed to achieve it before the stage of implementing optimistic concurrency, when I was forced to introduce aggregate version to domain event structure. That's definitely the point to be improved when perfect design is a must (AND IT ALWAYS IS!).
+- Replaying state of aggregate from events is really as handy thing as it's described in many articles somehow touching event sourcing topic. It's great way of persisting data, but...
+- this project doesn't contain any kind of read endpoints. Whenever I'd want to expose them, then the problem of fast reads arises. It's a huge point on design roadmap.
+- Actually implementing an idea of event sourcing showed me that even if I was concinced I understand it, then there are still many gaps to be filled in my knowledge, so I think I can close this sandbox side project marking it as a success -- I learned something and realized there's still a lot to learn :)
